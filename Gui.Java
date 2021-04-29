@@ -17,7 +17,7 @@ import vm252utilities.VM252Utilities;
  *
  * @author vandja05
  */
-public class GUI {
+public class Gui {
     public static void main(String[] commandLineArguments) {
        EventQueue.invokeLater(
                ()->
@@ -159,6 +159,9 @@ class ProgramFrame extends JFrame
       
       ApAction setprogcounter = new ApAction();
       Ap.addActionListener(setprogcounter);
+      
+      //ObAction memory = new ObAction();
+      //Ob.addActionListener(memory);
       
       
       byte [] program = VM252Utilities.readObjectCodeFromObjectFile(path.file_path());
@@ -393,15 +396,19 @@ class ProgramFrame extends JFrame
       {
                    private void storeIntegerValue(
  
+            
+            short address,
             short dataValue
             )
         {
 
             byte [] dataBytes = integerToBytes(dataValue);
 
+            memory[ address ] = dataBytes[ 0 ];
+            memory[ nextMemoryAddress(address) ] = dataBytes[ 1 ];
 
             }
-        private short fetchIntegerValue(byte [] memory, short address)
+        private short fetchIntegerValue(short address)
         {
 
             byte [] integerBytes = fetchBytePair(memory, address);
@@ -429,7 +436,7 @@ class ProgramFrame extends JFrame
                                 = decodedInstruction.length == 2
                                     ? ((short) (decodedInstruction[ 1 ]))
                                     : 0;
-                                            switch (opcode) {
+                                switch (opcode) {
 
                                 case VM252Utilities.LOAD_OPCODE -> {
 
@@ -487,6 +494,31 @@ class ProgramFrame extends JFrame
                                     }
 
                                case VM252Utilities.INPUT_OPCODE -> {
+                                    for (System.out.print("INPUT: "), System.out.flush();
+                                                input.hasNext() && ! input.hasNextInt();
+                                                System.out.print("INPUT: "),
+                                                    System.out.flush())
+                                        
+                                            input.next();
+                                            System.out.println(
+                                                "INPUT: Bad integer value; try again"
+                                                );
+                                            System.out.flush();
+                                            
+
+                                        lastInstructionCausedHalt = ! input.hasNext();
+
+
+                                        if (lastInstructionCausedHalt) {
+
+                                            System.out.println(
+                                                "EOF reading input;  machine halts"
+                                                );
+                                            System.out.flush();
+
+                                            suppressPcIncrement = true;
+
+                                            }
 
                     
 
@@ -519,6 +551,14 @@ class ProgramFrame extends JFrame
             }
 
         private byte[] integerToBytes(short dataValue) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        private short fetchIntegerValue(byte[] memory, short operand) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        private void storeIntegerValue(byte[] memory, short operand, short accumulator) {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
             
